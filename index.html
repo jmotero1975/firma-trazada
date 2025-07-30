@@ -137,10 +137,11 @@
     const ADDRESS = 'Paseo de la Castellana 216, CP 28046 MADRID';
 
     function generateSignature() {
-      const fullName = document.getElementById('fullName').value.trim().toUpperCase();
-      const position = document.getElementById('position').value.trim().toUpperCase();
-      const email = document.getElementById('email').value.trim();
-      const phone = document.getElementById('phone').value.trim();
+     const fullName = document.getElementById('fullName').value.trim().toUpperCase();
+  const position = document.getElementById('position').value.trim().toUpperCase();
+  const email = document.getElementById('email').value.trim();
+  const phoneInput = document.getElementById('phone').value.trim();
+  const phone = phoneInput !== '' ? phoneInput : '+34 91 534 96 45';
 
       const signatureHtml = `
         <table cellpadding="0" cellspacing="0" border="0" style="font-family: 'Segoe UI', Tahoma, sans-serif; font-size: 14px; color: #333;">
