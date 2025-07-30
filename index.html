@@ -137,11 +137,11 @@
     const ADDRESS = 'Paseo de la Castellana 216, CP 28046 MADRID';
 
     function generateSignature() {
-     const fullName = document.getElementById('fullName').value.trim().toUpperCase();
-  const position = document.getElementById('position').value.trim().toUpperCase();
-  const email = document.getElementById('email').value.trim();
-  const phoneInput = document.getElementById('phone').value.trim();
-  const phone = phoneInput !== '' ? phoneInput : '+34 91 534 96 45';
+      const fullName = document.getElementById('fullName').value.trim().toUpperCase();
+      const position = document.getElementById('position').value.trim().toUpperCase();
+      const email = document.getElementById('email').value.trim();
+      const phoneInput = document.getElementById('phone').value.trim();
+      const phone = phoneInput !== '' ? phoneInput : '+34 91 534 96 45';
 
       const signatureHtml = `
         <table cellpadding="0" cellspacing="0" border="0" style="font-family: 'Segoe UI', Tahoma, sans-serif; font-size: 14px; color: #333;">
@@ -168,10 +168,8 @@
         </table>
       `;
 
-      // Previsualización en el textarea
       document.getElementById('signatureOutput').value = signatureHtml;
 
-      // Previsualización en el iframe
       const iframe = document.getElementById('signatureIframe');
       const doc = iframe.contentDocument || iframe.contentWindow.document;
       doc.open();
@@ -197,23 +195,27 @@
       doc.close();
     }
 
-    function copySignature() {
+    async function copySignature() {
       const html = document.getElementById('signatureOutput').value;
-      const temp = document.createElement('textarea');
-      temp.value = html;
-      document.body.appendChild(temp);
-      temp.select();
-      document.execCommand('copy');
-      document.body.removeChild(temp);
-      alert('Firma copiada al portapapeles.');
+
+      try {
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            "text/html": new Blob([html], { type: "text/html" }),
+            "text/plain": new Blob([html], { type: "text/plain" })
+          })
+        ]);
+        alert('Firma copiada al portapapeles.');
+      } catch (err) {
+        alert('Tu navegador no permite copiar como HTML. Prueba con otro o copia manualmente.');
+      }
     }
 
-    // Rellenar valores por defecto al cargar
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('fullName').value = 'Tu Nombre y Apellido';
       document.getElementById('position').value = 'Tu cargo';
       document.getElementById('email').value = 'tunombre@trazada.com';
-      document.getElementById('phone').value = '+34 91 534 96 45';
+      document.getElementById('phone').value = '';
       generateSignature();
     });
   </script>
