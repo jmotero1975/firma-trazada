@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Generador de Firma - Trazada</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sen:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Sen', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f7f6;
+      color: #333;
+      line-height: 1.6;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+    .container {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input[type="text"], input[type="email"], input[type="tel"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #fbc50b;
+      color: #333;
+      border: none;
+      padding: 12px;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+    }
+    .signature-preview {
+      border: 1px dashed #ccc;
+      min-height: 150px;
+      background-color: transparent;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .signature-output {
+      width: 100%;
+      height: 250px;
+      margin-top: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      resize: vertical;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Generador de Firma de Email Trazada</h1>
+    <div class="form-group">
+      <label>Nombre Completo:</label>
+      <input type="text" id="fullName" placeholder="Ej: Tu Nombre y Apellido" />
+    </div>
+    <div class="form-group">
+      <label>Cargo:</label>
+      <input type="text" id="position" placeholder="Ej: SEO manager" />
+    </div>
+    <div class="form-group">
+      <label>Correo Electrónico:</label>
+      <input type="email" id="email" placeholder="Ej: tunombre@trazada.com" />
+    </div>
+    <div class="form-group">
+      <label>Teléfono:</label>
+      <input type="tel" id="phone" placeholder="Ej: +34 6666 666 666" />
+    </div>
+    <button onclick="generateSignature()">Generar Firma</button>
+    
+    <div class="signature-preview">
+      <iframe id="signatureIframe" frameborder="0" style="width:100%; height:100%; border:none;"></iframe>
+    </div>
+    <label>Código HTML de la Firma:</label>
+    <textarea id="signatureOutput" class="signature-output" readonly></textarea>
+    <button onclick="copySignature()">Copiar Firma</button>
+  </div>
+
+  <script>
+    const LOGO = 'https://trazada2025.k8s.trazada.com/wp-content/uploads/2025/07/Diseno-sin-titulo-2025-07-30T090829.277.png';
+    const ADDRESS = 'Paseo de la Castellana 216, CP 28046 MADRID';
+    const WEBSITE = 'https://www.trazada.com';
+
+function generateSignature() {
+  const fullName = document.getElementById('fullName').value.trim().toUpperCase();
+  const position = document.getElementById('position').value.trim().toUpperCase();
+  const email = document.getElementById('email').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+
+  const signatureHtml = `
+    <table cellpadding="0" cellspacing="0" border="0" style="font-family: 'Segoe UI', Tahoma, sans-serif; color: #333; font-size: 14px; line-height: 1.4; background-color: transparent; width: 100%;">
+      <tr>
+        <!-- BLOQUE IZQUIERDO: LOGO -->
+        <td style="width: 130px; vertical-align: top; padding-right: 15px;">
+          <img src="${LOGO}" alt="Trazada" style="width: 120px; height: auto; display: block;" />
+        </td>
+
+        <!-- BLOQUE DERECHO: Nombre, cargo y contacto -->
+        <td style="vertical-align: top; text-align: left;">
+          <p style="margin: 0; font-weight: bold; font-size: 18px;">${fullName}</p>
+          <p style="margin: 2px 0 8px 0; font-weight: bold; font-size: 11px; color: #fbc50b;">${position}</p>
+          <p style="margin: 0; font-size: 11px; line-height: 1.5;">
+            E: <a href="mailto:${email}" style="color: #333; text-decoration: none;">${email}</a><br/>
+            T: ${phone}<br/>
+            W: <a href="${WEBSITE}" target="_blank" style="color: #fbc50b; text-decoration: none;">${WEBSITE.replace('https://', '')}</a>
+          </p>
+        </td>
+      </tr>
+
+      <!-- LEGAL -->
+      <tr>
+        <td colspan="2" style="padding-top: 12px; border-top: 1px solid #eee; font-size: 8px; color: #888;">
+          <p style="margin: 0;">Este mensaje y sus archivos adjuntos son confidenciales. Si usted no es el destinatario indicado, no debe copiar, distribuir, divulgar o usar la información contenida en este correo. Por favor, elimine este mensaje y notifique al remitente.</p>
+          <p style="margin: 5px 0 0 0;">This message and its attachments are confidential. If you are not the intended recipient, you must not copy, distribute, disclose, or use the information contained in this email. Please delete this message and notify the sender.</p>
+        </td>
+      </tr>
+    </table>
+  `;
+
+  document.getElementById('signatureOutput').value = signatureHtml;
+
+  const iframe = document.getElementById('signatureIframe');
+  iframe.contentDocument.open();
+  iframe.contentDocument.write(`
+    <!DOCTYPE html>
+    <html>
+    <head><style>body { margin: 0; padding: 0; background-color: transparent; }</style></head>
+    <body>${signatureHtml}</body>
+    </html>
+  `);
+  iframe.contentDocument.close();
+}
+
+
+    function copySignature() {
+      const html = document.getElementById('signatureOutput').value;
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = html;
+      tempDiv.style.position = 'absolute';
+      tempDiv.style.left = '-9999px';
+      document.body.appendChild(tempDiv);
+
+      const range = document.createRange();
+      range.selectNodeContents(tempDiv);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+
+      try {
+        document.execCommand('copy');
+        alert('Firma copiada al portapapeles.');
+      } catch {
+        alert('No se pudo copiar. Usa copiar manualmente.');
+      }
+
+      document.body.removeChild(tempDiv);
+      selection.removeAllRanges();
+    }
+
+    // Preload con valores de ejemplo
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('fullName').value = 'Jose M. Otero';
+      document.getElementById('position').value = 'Managing Director';
+      document.getElementById('email').value = 'jmotero@trazada.com';
+      document.getElementById('phone').value = '+34 686 850 946';
+      generateSignature();
+    });
+  </script>
+</body>
+</html>
